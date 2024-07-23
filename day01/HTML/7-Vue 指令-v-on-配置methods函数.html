@@ -1,0 +1,41 @@
+<!--
+ * @Author: 宋之树 2334304096@qq.com
+ * @Date: 2024-07-23 19:57:39
+ * @LastEditors: 宋之树 2334304096@qq.com
+ * @LastEditTime: 2024-07-23 20:00:42
+ * @FilePath: \Vue\day01\HTML\7-Vue 指令-v-on-配置methods函数.html
+ * @Description: 
+-->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <div id="app">
+    <button @click="fn">切换显示隐藏</button>
+    <h1 v-show="flag">程序员</h1>
+  </div>
+  <script src="../JS/vue.js"></script>
+  <script>
+    const app = new Vue({
+      el: '#app',
+      data: {
+        flag: true
+      },
+      methods: {
+        fn() {
+          console.log("切换隐藏");
+          app.flag = !app.flag
+        }
+      }
+    })
+  </script>
+</body>
+
+</html>

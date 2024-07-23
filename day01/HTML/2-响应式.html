@@ -1,0 +1,40 @@
+<!--
+ * @Author: 宋之树 2334304096@qq.com
+ * @Date: 2024-07-23 17:37:52
+ * @LastEditors: 宋之树 2334304096@qq.com
+ * @LastEditTime: 2024-07-23 17:49:34
+ * @FilePath: \Vue\day01\HTML\2-响应式.html
+ * @Description: 
+-->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>初始化页面</title>
+</head>
+
+<body>
+    <div id="app">
+        {{ message }}
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <script>
+        let app = new Vue({
+            el: '#app',
+            data: {
+                message: 'Hello Vue!'
+            }
+        })
+
+        /* 定时去修改message app.data.message是获取不到数据的,data是app中的一个属性 */
+        setTimeout(function () {
+            app.message = "臭狗屎"
+            console.log(app.message);
+        }, 1000); // 每秒执行一次
+    </script>
+</body>
+
+
+</html>
