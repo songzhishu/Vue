@@ -1,0 +1,69 @@
+<!--
+ * @Author: 宋之树 2334304096@qq.com
+ * @Date: 2024-07-24 20:31:24
+ * @LastEditors: 宋之树 2334304096@qq.com
+ * @LastEditTime: 2024-07-25 08:01:31
+ * @FilePath: \Vue\day03\HTML\1-生命周期-四大阶段-八个钩子.html
+ * @Description: 
+-->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <div id="app">
+    <h3>{{ title }}</h3>
+    <div>
+      <button @click="count--">-</button>
+      <span>{{ count }}</span>
+      <button @click="count++">+</button>
+    </div>
+  </div>
+  <script src="../JS/vue.js"></script>
+  <script>
+    const app = new Vue({
+      el: '#app',
+      data: {
+        count: 100,
+        title: '计数器'
+      },
+      /* 生命周期钩子 */
+      beforeCreate() {
+        console.log("响应式数据准备号之前！", this.count);
+      },
+      created() {
+        /* 最早获取数据，然后赋值给响应式数据 */
+        console.log("响应式数据准备好之后!", this.count);
+      },
+      beforeMount() {
+        /* 也面里没有数据，想操作dom要等等 */
+        console.log("模板渲染好之前", document.querySelector('h3').innerHTML);
+      },
+      mounted() {
+        console.log("模板渲染之后", document.querySelector('h3').innerHTML);
+      },
+      beforeUpdate() {
+        /* 修改数据的时候触发 */
+        console.log('beforeUpdate 数据更新之前==》数据修改 视图没有更新',document.querySelector('span').innerHTML);
+      },
+      updated() {
+        console.log('update 数据更新之后 数据修改 视图更新',document.querySelector('span').innerHTML);
+      },
+      beforeDestroy () {
+        console.log('beforeDestroy, 卸载前')
+        console.log('清除掉一些Vue以外的资源占用，定时器，延时器...')
+      },
+      destroyed () {
+        console.log('destroyed，卸载后')
+      }
+    })
+  </script>
+</body>
+
+</html>

@@ -2,5 +2,9 @@
     "Codegeex.Chat.LanguagePreference": "中文",
     "Codegeex.Comment.LanguagePreference": "中文",
     "Codegeex.SidebarUI.LanguagePreference": "中文",
-    "Codegeex.CompletionModel": "CodeGeeX Pro[Beta]"
+    "Codegeex.CompletionModel": "CodeGeeX Pro[Beta]",
+    "Codegeex.CompletionDelay": 0.1,
+    "Codegeex.CommitMessageStyle": "ConventionalCommits",
+    "Codegeex.Privacy": true,
+    "Codegeex.OnlyKeyControl": true
 }

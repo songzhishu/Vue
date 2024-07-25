@@ -515,3 +515,100 @@ computed: {
 }
 ```
 
+### 2.5、watch监视器
+
+​		在Vue.js中，`watch`是一个监视器，用于监听Vue实例的数据变化。当被监视的数据发生变化时，会触发指定的回调函数。`watch`主要用于响应数据的变化，从而执行一些操作，例如更新DOM、发送请求等。
+
+```
+// 使用watch监视message的变化
+watch: {
+  message (newVal, oldVal) {
+    console.log('message changed from', oldVal, 'to', newVal);
+  },
+  'obj.name' (newVal, oldVal) {
+    console.log('message changed from', oldVal, 'to', newVal);
+  },
+}
+
+
+
+```
+
+复杂用法：
+
+```
+watch: {
+     obj: {
+        deep: true, // 深度监视
+        immediate: true, // 立刻执行，一进入页面handler就立刻执行一次
+        handler (newValue) {
+        	//业务逻辑
+        }
+      }
+}
+
+```
+
+## 3、DAY3
+
+### 3.1、生命周期
+
+​		Vue 的生命周期指的是 Vue 实例从创建到销毁的一系列过程，包括创建、挂载、更新、销毁等阶段。在 Vue.js 中，钩子函数（Hook function）是 Vue 生命周期中的一些特殊函数，它们在 Vue 实例的生命周期的不同阶段被调用。这些函数可以让我们在 Vue 实例的生命周期中执行一些特定的操作。
+
+1. beforeCreate 和 create：在实例被创建之后，数据观测和事件配置之前被调用。
+2. beforeMount：在挂载开始之前被调用，相关的 render 函数首次被调用。
+3. mounted：在实例被插入到 DOM 之后被调用，这时 Vue 实例已经准备好进行数据渲染和页面交互。
+4. beforeUpdate 和 update：在数据更新之前和之后被调用，这时 Vue 实例的 DOM 已经更新。
+5. beforeDestroy ：在实例销毁之前调用，这个钩子可以访问到 DOM 元素和数据。
+6. destroy：在实例销毁之后调用，这个钩子不能访问到 DOM 元素和数据。
+
+```html
+<div id="app">
+    <h3>{{ title }}</h3>
+    <div>
+      <button @click="count--">-</button>
+      <span>{{ count }}</span>
+      <button @click="count++">+</button>
+    </div>
+  </div>
+  <script src="../JS/vue.js"></script>
+  <script>
+    const app = new Vue({
+      el: '#app',
+      data: {
+        count: 100,
+        title: '计数器'
+      },
+      /* 生命周期钩子 */
+      beforeCreate() {
+        console.log("响应式数据准备号之前！", this.count);
+      },
+      created() {
+        /* 最早获取数据，然后赋值给响应式数据 */
+        console.log("响应式数据准备好之后!", this.count);
+      },
+      beforeMount() {
+        /* 也面里没有数据，想操作dom要等等 */
+        console.log("模板渲染好之前", document.querySelector('h3').innerHTML);
+      },
+      mounted() {
+        console.log("模板渲染之后", document.querySelector('h3').innerHTML);
+      },
+      beforeUpdate() {
+        /* 修改数据的时候触发 */
+        console.log('beforeUpdate 数据更新之前==》数据修改 视图没有更新',document.querySelector('span').innerHTML);
+      },
+      updated() {
+        console.log('update 数据更新之后 数据修改 视图更新',document.querySelector('span').innerHTML);
+      },
+      beforeDestroy () {
+        console.log('beforeDestroy, 卸载前')
+        console.log('清除掉一些Vue以外的资源占用，定时器，延时器...')
+      },
+      destroyed () {
+        console.log('destroyed，卸载后')
+      }
+    })
+  </script>
+```
+
