@@ -716,3 +716,182 @@ vscode快捷键:
 ​		在Vue中，当使用scoped属性给组件的style标签添加scoped属性时，其内部的CSS样式会作用于当前组件，而不会影响到其他组件。这是通过给HTML的DOM节点添加一个不重复的data属性来表示它的唯一值，然后在每句css选择器的末尾加一个当前组件的data属性选择器来私有化样式。如果组件内部包含有其他组件，只会给其他组件的最外层标签加上当前组件的data属性4。
 
 ​		但是，如果在组件中使用了第三方组件库（如Element Plus或Vant），并且需要修改第三方组件的样式，而又不想去除scoped属性造成组件之间的样式污染，可以采用样式穿透的方法。在Vue 2中，可以使用/deep/操作符，在Vue 3中，可以使用::v-deep伪类。这些操作符可以让你穿透组件的作用域，修改其内部元素的样式
+
+```
+<template>
+  <div>baseone</div>
+</template>
+
+<script>
+export default {};
+</script>
+
+<style>
+    div {
+      border: 3px solid salmon;
+      margin: 30px;
+    }
+</style>
+```
+
+只在baseone中设置了div标签样式，但是其他的div标签获得了同样的样式。
+
+![image-20240725185332115](C:\Users\Doudouxia\AppData\Roaming\Typora\typora-user-images\image-20240725185332115.png)
+
+### 4.2、data为一个函数
+
+​		在Vue中，`data()`方法被定义成一个函数，而不是一个对象，是因为Vue的组件是可以复用的，如果`data()`返回的是一个对象，那么在每次创建一个新的组件实例时，对于同一个组件，Vue会共用同一个对象，这会导致新的组件实例不会拥有自己的响应式数据，而是会共用同一个响应式数据，这显然不是我们期望的结果。因此，Vue使用了函数来返回一个新的数据对象，这样每个组件实例都会拥有自己的响应式数据，不会互相影响。
+
+​		说人话：对象的话多个组件公用一个，导致数据乱套，但是函数的话，一个个组件之间是相互隔离开的。
+
+```
+export default {
+  /*  */
+  data() {
+    return {
+      count: 100,
+    }
+  },
+}
+```
+
+### 4.3、组件之间通信
+
+​		在Vue.js中，组件之间的通信方式有很多种，每种方式都有其特定的适用场景。以下是一些常见的Vue组件通信方式：
+
+1. 父子组件通信：父组件可以通过props向子组件传递数据，子组件可以通过emit事件向父组件发送消息。
+2. 兄弟组件通信：可以使用Event Bus或者Vuex。Event Bus通过创建一个中央事件总线，让兄弟组件通过监听和触发事件来实现通信。Vuex通过全局状态管理库Vuex，可以在任意组件之间共享状态。
+3. 跨层级组件通信：Vue3提供了provide和inject API，使得跨层级组件通信变得简单。
+4. 其他通信方式：Vue3对v-model进行了改进，现在可以在自定义组件上使用，实现双向绑定。此外，通过Teleport API可以将子组件的内容移动到DOM的另一部分，实现组件内容与逻辑的分离。
+
+#### 4.3.1、父子间
+
+```
+<template>
+  <div class="app" style="border: 3px solid #000; margin: 10px">
+    我是APP组件
+    <Son :title="myTitle" @changeTitle="handleChange"></Son>
+  </div>
+</template>
+<script>
+import Son from "./components/Son.vue";
+export default {
+  data() {
+    return {
+      myTitle: "你好呀狗屎！",
+    };
+  },
+  components: {
+    Son,
+  },
+  methods: {
+    handleChange(newValue) {
+      console.log(newValue);
+      this.myTitle=newValue
+    },
+  },
+};
+</script>
+<style>
+</style>
+```
+
+```
+<template>
+  <div class="son" style="border: 3px solid #000; margin: 10px">
+    <!-- 3.直接使用props的值 -->
+    我是Son组件{{ title }}
+
+    <button @click="change">点击</button>
+  </div>
+</template>
+
+<script>
+export default {
+  name: "Son-Child",
+  // 2.通过props来接受
+  props: ["title"],
+  methods: {
+    change() {
+      /* 通过$emit去发送消息,通知父组件去修改数据
+       */
+      this.$emit('changeTitle',"你才是狗屎")
+    },
+  },
+};
+</script>
+<style>
+</style>
+```
+
+#### 4.3.2、prop是什么
+
+​		组件上注册的一些自定义属性，向组件传递一些数据，不限制传递数据的数量和不限制传递数据类型。
+
+```js
+<template>
+  <div class="app">
+    <UserInfo
+      :username="username"
+      :age="age"
+      :isSingle="isSingle"
+      :car="car"
+      :hobby="hobby"
+    ></UserInfo>
+  </div>
+</template>
+
+<script>
+import UserInfo from "./components/UserInfo.vue";
+export default {
+  data() {
+    return {
+      username: "小帅",
+      age: 28,
+      isSingle: true,
+      car: {
+        brand: "宝马",
+      },
+      hobby: ["篮球", "足球", "羽毛球"],
+    };
+  },
+  components: {
+    UserInfo,
+  },
+};
+</script>
+
+<style>
+</style>
+```
+
+```js
+<template>
+  <div class="userinfo">
+    <h3>我是个人信息组件</h3>
+    <div>姓名：{{ username }}</div>
+    <div>年龄：{{ age }}</div>
+    <div>是否单身：{{ isSingle?"是":"否" }}</div>
+    <div>座驾：{{ car.brand }}</div>
+    <div>兴趣爱好:{{ hobby.join(', ') }}</div>
+  </div>
+</template>
+
+<script>
+export default {
+  props: ["username", "age", "isSingle", "car", "hobby"],
+};
+</script>
+
+<style>
+.userinfo {
+  width: 300px;
+  border: 3px solid #000;
+  padding: 20px;
+}
+.userinfo > div {
+  margin: 20px 10px;
+}
+</style>
+```
+
