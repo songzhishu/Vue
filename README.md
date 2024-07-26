@@ -24,7 +24,7 @@ ${}类似这个可以解析数据,然后渲染到页面中
 
 ​	什么是响应式？就是可以动态的修改数据后然后，可以实时的读取到数据的状态，数据一边变化就渲染到最新的数据。
 
-```
+```html
  <div id="app">
         {{ message }}
     </div>
@@ -60,7 +60,7 @@ ${}类似这个可以解析数据,然后渲染到页面中
 - `v-if`：条件为假时，元素及其子元素不会被渲染到DOM中，因此不会占用任何性能。当条件变为真时，元素及其子元素会被渲染到DOM中，可能会消耗一些性能。适用于条件不经常改变的情况，因为每次条件改变时，元素及其子元素都会被重新渲染。
 - `v-show`：无论条件是否为真，元素及其子元素都会被渲染到DOM中，因此会占用一些性能。条件为假时，元素会被添加一个`display: none`的样式，使其不可见，但不会销毁元素及其子元素。采用的是以css的方式去控制元素的显示和隐藏，所以比较适用于对于频繁切换显示和隐藏的元素
 
-```
+```html
   <div id="app">
     <div v-show="flag" class="box">我是v-show控制的盒子</div>
     <div v-if="flag" class="box">我是v-if控制的盒子</div>
@@ -280,7 +280,7 @@ ${}类似这个可以解析数据,然后渲染到页面中
 
 - 遍历对象的属性名和属性值：
 
-```
+```html
 <div v-for="(value, key) in object" :key="key">
   {{ key }}: {{ value }}
 </div>
@@ -370,7 +370,7 @@ ${}类似这个可以解析数据,然后渲染到页面中
 
 class增强
 
-```
+```html
 <div id="app">
     <ul>
       <li v-for="(item,index) in list" :key="item.id" @click="change(item.id)">
@@ -403,7 +403,7 @@ class增强
 
 style：样式增强
 
-```
+```html
  <div id="app">
     <div class="box" :style="{ width: '400px', height: '400px', backgroundColor: 'green' }"></div>
     <div class="box" :style="{ width: '400px', height: '400px', backgroundColor: 'red' }"></div>
@@ -519,7 +519,7 @@ computed: {
 
 ​		在Vue.js中，`watch`是一个监视器，用于监听Vue实例的数据变化。当被监视的数据发生变化时，会触发指定的回调函数。`watch`主要用于响应数据的变化，从而执行一些操作，例如更新DOM、发送请求等。
 
-```
+```js
 // 使用watch监视message的变化
 watch: {
   message (newVal, oldVal) {
@@ -536,7 +536,7 @@ watch: {
 
 复杂用法：
 
-```
+```js
 watch: {
      obj: {
         deep: true, // 深度监视
@@ -621,7 +621,7 @@ vue项目的开发模式可以分为两种：
 
 使用步骤：
 
-```
+```shell
 1、全局安装
 npm i @vue/cli -g
 
@@ -668,7 +668,7 @@ npm sun serve
 
 - 局部注册：只能再注册的组件内使用，创建一个vue文件，然后在使用组件内导入并注册创建.vue文件是在`components`中，然后再使用组件的文件中导入组件，并且局部注册。
 
-```
+```js
 import { 组件对象 } from "./vue文件";
 export default {
   components: {
@@ -681,7 +681,7 @@ export default {
 
 - 全局注册：在所有的组件内都能够使用，一旦注册成功，所有的组件都可以使用，注册的化要到main.js中进行全局注册。
 
-```
+```js
 //导入核心包
 import Vue from 'vue'
 //导入根组件
@@ -717,7 +717,7 @@ vscode快捷键:
 
 ​		但是，如果在组件中使用了第三方组件库（如Element Plus或Vant），并且需要修改第三方组件的样式，而又不想去除scoped属性造成组件之间的样式污染，可以采用样式穿透的方法。在Vue 2中，可以使用/deep/操作符，在Vue 3中，可以使用::v-deep伪类。这些操作符可以让你穿透组件的作用域，修改其内部元素的样式
 
-```
+```html
 <template>
   <div>baseone</div>
 </template>
@@ -744,7 +744,7 @@ export default {};
 
 ​		说人话：对象的话多个组件公用一个，导致数据乱套，但是函数的话，一个个组件之间是相互隔离开的。
 
-```
+```js
 export default {
   /*  */
   data() {
@@ -766,7 +766,7 @@ export default {
 
 #### 4.3.1、父子间
 
-```
+```html
 <template>
   <div class="app" style="border: 3px solid #000; margin: 10px">
     我是APP组件
@@ -796,7 +796,7 @@ export default {
 </style>
 ```
 
-```
+```html
 <template>
   <div class="son" style="border: 3px solid #000; margin: 10px">
     <!-- 3.直接使用props的值 -->
@@ -938,7 +938,7 @@ export default {
 
 **事件总线：**
 
-```
+```js
 import Vue from 'vue'
 
 const Bus  =  new Vue()
@@ -948,7 +948,7 @@ export default Bus
 
 **消息发送端：**
 
-```
+```html
 <template>
   <div class="base-b">
     <div>我是B组件（发布方）</div>
@@ -973,7 +973,7 @@ export default {
 
 **消息接收端：**
 
-```
+```html
 <template>
   <div class="base-a">
     我是A组件（接受方）
@@ -1005,7 +1005,7 @@ export default {
 
 ​		provide是一个返回对象的选项，可以在祖先组件中定义，返回的对象中的属性可以在所有子孙组件的inject选项中接收。
 
-```
+```js
 // 祖先组件
 export default {
   provide: {
@@ -1021,7 +1021,7 @@ export default {
 
 ​		inject是一个数组或对象，可以在子孙组件中定义，用于接收祖先组件通过provide选项提供的属性。
 
-```
+```js
 // 子孙组件
 export default {
   inject: ['name'],
@@ -1036,4 +1036,402 @@ export default {
 ​		这种方式可以实现跨多个层级组件的通信，但需要注意的是，provide和inject并不是响应式的，如果在组件内部的数据发生变化时，需要通过其他方式（如事件总线）来通知子孙组件更新数据。
 
 注意：简单数据类型的话不是响应式的，但是对于复杂数据类型的话是响应式的！
+
+### 4.4、v-model原理
+
+​		我们都知道，`v-model`可以双向绑定，就是视图变<==>数据变，`:属性`呐只是对数据进行渲染，但是没有对数据的双向绑定。
+
+```html
+<input type="text" v-model="msg1">
+
+<input type="text" :value="msg2">  这个要想达到上面的效果，还要加一些东西
+
+<input type="text" :value="msg2" @input="msg2 = $event.target.value">
+
+```
+
+​		是这样的，父传递一个数据给子，然后子现在向修改这个数据，但是子无法在使用v-model去对数据进行双向的数据绑定，那么对于这种数据跨组件的传递后如何进行双向的绑定？
+
+#### 4.4.1、原始双向
+
+父组件：
+
+```html
+<template>
+  <div class="app">
+  //这里就是双向绑定咯！！！ 你改我也改 我改你也要改
+    <BaseSelect :cityId="selectId" @changeCity="selectId = $event"></BaseSelect>
+  </div>
+</template>
+
+<script>
+import BaseSelect from "./components/BaseSelect.vue";
+export default {
+  data() {
+    return {
+      selectId: "102",
+    };
+  },
+  components: {
+    BaseSelect,
+  },
+  methods: {
+    handleChange(value) {
+      this.selectId = value;
+      //和上面的写法实现的功能一致
+    },
+  },
+};
+</script>
+
+<style>
+</style>
+```
+
+子组件：
+
+```html
+<template>
+  <div>
+    <select :value="cityId" @change="handleChange">
+      <option value="101">北京</option>
+      <option value="102">上海</option>
+      <option value="103">武汉</option>
+      <option value="104">广州</option>
+      <option value="105">深圳</option>
+    </select>
+  </div>
+</template>
+
+<script>
+export default {
+  props: {
+    cityId: String,
+  },
+  methods:{
+    handleChange(e){
+      /* 获取事件触发的事件源 */
+      this.$emit('changeCity',e.target.value)
+    }
+  }
+};
+</script>
+
+<style>
+</style>
+```
+
+这里实现起来数据双向其实还是比骄傲复杂的，那么有没有简化的方式去实现呐
+
+#### 4.4.2、简化双向
+
+父组件：
+
+```
+<template>
+  <div class="app">
+    <BaseSelect v-model="selectId"></BaseSelect>
+  </div>
+</template>
+```
+
+子组件：
+
+```html
+<template>
+  <div>
+    <select :value="value" @change="handleChange">
+      <option value="101">北京</option>
+      <option value="102">上海</option>
+      <option value="103">武汉</option>
+      <option value="104">广州</option>
+      <option value="105">深圳</option>
+    </select>
+  </div>
+</template>
+
+<script>
+export default {
+  props: {
+    value: String,
+  },
+  methods: {
+    handleChange(e) {
+      /* 获取事件触发的事件源 */
+      this.$emit("input", e.target.value);
+    },
+  },
+};
+</script>
+```
+
+#### 4.4.3、sync修饰符
+
+父组件:
+
+```html
+<template>
+  <div class="app">
+    <button @click="openDialog">退出按钮</button>
+    <!-- isShow.sync  => :isShow="isShow" @update:isShow="isShow=$event" -->
+    <BaseDialog :isShow.sync="isShow"></BaseDialog>
+  </div>
+</template>
+
+<script>
+import BaseDialog from './components/BaseDialog.vue'
+export default {
+  data() {
+    return {
+      isShow: false,
+    }
+  },
+  methods: {
+    openDialog() {
+      this.isShow = true
+      // console.log(document.querySelectorAll('.box')); 
+    },
+  },
+  components: {
+    BaseDialog,
+  },
+}
+</script>
+
+<style>
+</style>
+```
+
+子组件：
+
+```html
+<!--
+ * @Author: 宋之树 2334304096@qq.com
+ * @Date: 2024-07-26 17:51:25
+ * @LastEditors: 宋之树 2334304096@qq.com
+ * @LastEditTime: 2024-07-26 17:54:10
+ * @FilePath: \Vue\day04\vue-project\src\components\BaseDialog.vue
+ * @Description: 
+-->
+<template>
+  <div class="base-dialog-wrap" v-show="isShow">
+    <div class="base-dialog">
+      <div class="title">
+        <h3>温馨提示：</h3>
+        <button class="close" @click="closeDialog">x</button>
+      </div>
+      <div class="content">
+        <p>你确认要退出本系统么？</p>
+      </div>
+      <div class="footer">
+        <button @click="closeDialog">确认</button>
+        <button @click="closeDialog">取消</button>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  props: {
+    isShow: Boolean,
+  },
+  methods:{
+    closeDialog(){
+      this.$emit('update:isShow',false)
+    }
+  }
+}
+</script>
+
+<style scoped>
+.base-dialog-wrap {
+  width: 300px;
+  height: 200px;
+  box-shadow: 2px 2px 2px 2px #ccc;
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  padding: 0 10px;
+}
+.base-dialog .title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid #000;
+}
+.base-dialog .content {
+  margin-top: 38px;
+}
+.base-dialog .title .close {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  line-height: 10px;
+}
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 26px;
+}
+.footer button {
+  width: 80px;
+  height: 40px;
+}
+.footer button:nth-child(1) {
+  margin-right: 10px;
+  cursor: pointer;
+}
+</style>
+```
+
+### 4.5、ref和$refs
+
+​		`ref` 是 Vue.js 中的一个特殊属性，用于创建一个对一个 DOM 元素的引用。当你需要在 Vue 实例中访问一个 DOM 元素时，可以使用 `ref`。`ref` 的值是一个字符串，用于标识该 DOM 元素。
+
+```html
+<template>
+  <div>
+    <input ref="myInput" type="text" />
+    <button @click="handleClick">Click me</button>
+  </div>
+</template>
+
+<script>
+export default {
+  methods: {
+    handleClick() {
+      console.log(this.$refs.myInput.value);
+    },
+  },
+};
+</script>
+```
+
+​		在这个例子中，我们为 `input` 元素添加了一个 `ref` 属性，值为 `myInput`。然后，在 `handleClick` 方法中，我们可以通过 `this.$refs.myInput` 访问该 `input` 元素。
+
+​		为什么要引入这个概念呐，是这样的我们之前操作dom，一般是使用功能querySelector到整个页面范围内去查找所需要的元素，但是用了Vue后，我们的页面是组件化的，为了查找更加准确，我们的查找范围可以限定在当前的组建中。
+
+​		当然ref不光是可以可以标记标签，还可以标记组件，然后或者组件对象实例后可以访问到一系列的数据，实例中的数据，方法等等。
+
+**父组件：**
+
+```html
+<template>
+  <div class="app">
+    <h4>父组件</h4>
+    <BaseForm ref="baseForm"></BaseForm>
+    <button @click="getFormData">获取数据</button>
+    <button @click="resetFormData">重置数据</button>
+  </div>
+</template>
+<script>
+import BaseForm from "./components/BaseForm.vue";
+export default {
+  components: {
+    BaseForm,
+  },
+  methods: {
+    getFormData() {
+      this.$refs.baseForm.getData();
+    },
+    resetFormData() {
+      this.$refs.baseForm.resetData();
+    },
+  },
+};
+</script>
+```
+
+**子组件：**
+
+```html
+<template>
+  <div class="app">
+    <div>
+      账号: <input v-model="username" type="text">
+    </div>
+     <div>
+      密码: <input v-model="password" type="text">
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      username: 'admin',
+      password: '123456',
+    }
+  },
+  methods: {
+    getData() {
+      console.log('获取表单数据', this.username, this.password);
+    },
+    resetData() {
+      this.username = ''
+      this.password = ''
+    },
+  }
+}
+</script>
+
+<style scoped>
+.app {
+  border: 2px solid #ccc;
+  padding: 10px;
+}
+.app div{
+  margin: 10px 0;
+}
+.app div button{
+  margin-right: 8px;
+}
+</style>
+```
+
+### 4.6、$nextTick
+
+​		$nextTick 是 Vue.js 中的一个方法，它是一个异步函数，用于在下一次 DOM 更新循环结束之后执行延迟回调。在 Vue.js 中，当你更改了一些数据，例如更新了某个 DOM 元素的属性或样式，然后希望在这个元素更新后执行一些操作，这时就可以使用 $nextTick。
+
+​	这是因为 Vue.js 的响应式系统会在数据更改后更新 DOM，但是如果你在数据更改后立即执行一个依赖于 DOM 的操作，可能会因为 DOM 还没有更新而出现错误。
+
+```
+<template>
+  <div class="app">
+    <div v-if="isShowEdit">
+      <input ref="inp" type="text" v-model="editValue" />
+      <button>确认</button>
+    </div>
+    <div v-else>
+      <span>{{ title }}</span>
+      <button @click="handleEdit">编辑</button>
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      title: "大标题",
+      isShowEdit: false,
+      editValue: "",
+    };
+  },
+  methods: {
+    handleEdit() {
+      this.isShowEdit = true;
+      
+      this.$nextTick(()=>{
+        this.$refs.inp.focus();
+      })
+
+    },
+  },
+};
+</script>
+```
 
