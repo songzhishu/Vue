@@ -895,3 +895,145 @@ export default {
 </style>
 ```
 
+##### 4.3.2.1、数据校验
+
+​		组件之间通过prop来传递数据，也不是乱传递的，可以组件的prop指定验证要求，不符合要求的，控制台就会有错误提示。
+
+- 类型校验
+- 非空校验
+- 默认值
+- 自定义校验
+
+```js
+export default {
+  // 1.基础写法（类型校验）
+  /* props: {
+    w: Number,//类型校验
+  }, */
+
+  // 2.完整写法（类型、是否必填、默认值、自定义校验）
+  props: {
+    w: {
+      type: Number,
+      required: true,
+      default: 50,
+      validator(value) {
+        /* 对value进行数据处理 */
+        return true; /* 处理判断 */
+      },
+    },
+  },
+};
+```
+
+#### 4.3.3、data和prop的区别
+
+​		虽然说他们都可以为组件提供数据，但是data的数据是自己的然后它可以随便改动，prop的话数据是外部传递过来的，不能直接改动，要遵循**单项数据流**。
+
+#### 4.3.4、非父子间的通信
+
+##### 4.3.4.1、事件总线
+
+​		在Vue中，非父子组件间的通信可以通过中央事件总线（event Bus）实现，这种方法不使用props和Vuex，它是实现非父子组件通信的一种解决方案。其原理是创建一个Vue实例，通过一个空的Vue实例作为桥梁实现Vue组件间的通信。
+
+**事件总线：**
+
+```
+import Vue from 'vue'
+
+const Bus  =  new Vue()
+
+export default Bus
+```
+
+**消息发送端：**
+
+```
+<template>
+  <div class="base-b">
+    <div>我是B组件（发布方）</div>
+    <button @click="sendMsgFn">发送消息</button>
+  </div>
+</template>
+
+<script>
+//这里导入事件总线中
+import Bus from '../utils/EventBus'
+
+export default {
+  methods: {
+    sendMsgFn() {
+      //发送消息
+      Bus.$emit('sendMsg', '今天天气不错，适合旅游')
+    },
+  },
+}
+</script>
+```
+
+**消息接收端：**
+
+```
+<template>
+  <div class="base-a">
+    我是A组件（接受方）
+    <p>{{msg}}</p>  
+  </div>
+</template>
+
+<script>
+import Bus from '../utils/EventBus'
+export default {
+  data() {
+    return {
+      msg: '',
+    }
+  },
+  created() {
+    Bus.$on('sendMsg', (msg) => {
+      this.msg = msg
+    })
+  },
+}
+</script>
+
+```
+
+##### 4.3.4.2、provide和inject（跨层级）
+
+​		在Vue中，provide和inject是一种实现跨层级组件通信的方式。这种方式主要用于父组件与子组件之间跨多层级进行通信。
+
+​		provide是一个返回对象的选项，可以在祖先组件中定义，返回的对象中的属性可以在所有子孙组件的inject选项中接收。
+
+```
+// 祖先组件
+export default {
+  provide: {
+    name: 'Vue',
+    car：{
+    	color："green",
+    	price:1000
+    }
+  },
+  // ...
+}
+```
+
+​		inject是一个数组或对象，可以在子孙组件中定义，用于接收祖先组件通过provide选项提供的属性。
+
+```
+// 子孙组件
+export default {
+  inject: ['name'],
+  mounted() {
+    console.log(this.name);  // 输出 'Vue'
+  }
+  // ...
+}
+
+```
+
+​		这种方式可以实现跨多个层级组件的通信，但需要注意的是，provide和inject并不是响应式的，如果在组件内部的数据发生变化时，需要通过其他方式（如事件总线）来通知子孙组件更新数据。
+
+注意：简单数据类型的话不是响应式的，但是对于复杂数据类型的话是响应式的！
+
