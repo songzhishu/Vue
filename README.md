@@ -1398,7 +1398,7 @@ export default {
 
 ​	这是因为 Vue.js 的响应式系统会在数据更改后更新 DOM，但是如果你在数据更改后立即执行一个依赖于 DOM 的操作，可能会因为 DOM 还没有更新而出现错误。
 
-```
+```html
 <template>
   <div class="app">
     <div v-if="isShowEdit">
@@ -1433,5 +1433,255 @@ export default {
   },
 };
 </script>
+```
+
+## 5、DAY5
+
+### 5.1、自定义指令
+
+​	Vue.js 中的自定义指令是指在 Vue 实例的 `directives` 对象中定义的指令。指令是一种特殊类型的 DOM 属性，它可以让你在 Vue 模板中更灵活地操作 DOM。
+
+​	要创建一个自定义指令，你需要在 Vue 实例的 `directives` 对象中定义一个属性，该属性的值是一个对象，其中包含两个方法：`bind` 和 `inserted`。`bind` 方法在指令第一次绑定到元素时调用，`inserted` 方法在元素插入父节点时调用。
+
+全局注册:
+
+```
+//全局注册指令
+Vue.directive('focus',{
+  //当绑定的元素添加到页面的时候会触发inserted函数
+  inserted(el){
+    console.log(el);
+    el.focus()
+  }
+})
+```
+
+局部注册：
+
+```
+directives:{
+//指令名 指令的配置项
+focus:{
+  inserted(el){
+    el.focus()
+  }
+}
+},
+```
+
+自定定义指令传递值：
+
+```html
+<template>
+  <div>
+    <h1 v-color="color1">指令的值1测试</h1>
+    <h1 v-color="color2">指令的值2测试</h1>
+  </div>
+</template>
+
+<script>
+export default {
+  data () {
+    return {
+      color1: 'red',
+      color2: 'orange'
+    }
+  },
+  directives: {
+    color: {
+      // 1. inserted 提供的是元素被添加到页面中时的逻辑
+      inserted (el, binding) {
+        // console.log(el, binding.value);
+        // binding.value 就是指令的值
+        el.style.color = binding.value
+      },
+      // 2. update 指令的值修改的时候触发，提供值变化后，dom更新的逻辑
+      update (el, binding) {
+        console.log('指令的值修改了');
+        el.style.color = binding.value
+      }
+    }
+  }
+}
+</script>
+<style>
+
+</style>
+```
+
+​		上面的这种方式，可以实现don元素添加的时候，去对dom元素进行操作，但是对于数据传递的化，只能是单向的，要想双向，那么就要监听元素数据是变化。
+
+### 5.2、插槽
+
+​		插槽（Slots）是 Vue.js 中的一个特性，它允许你在父组件中为子组件提供默认的内容。插槽允许你在父组件中定义一段模板，然后子组件可以根据需要决定如何使用这个模板。
+
+​		在 Vue.js 2.x 中，插槽主要通过 `<slot>` 标签实现。在父组件中，你可以使用 `<slot>` 标签来定义一段模板，然后子组件可以通过 `<slot>` 标签来决定如何使用这个模板。
+
+​		例如，假设你有两个组件：`parent.vue` 和 `child.vue`。`parent.vue` 中有一个 `<slot>` 标签，`child.vue` 中也有一个 `<slot>` 标签。当 `child.vue` 被渲染到 `parent.vue` 中时，`parent.vue` 中的 `<slot>` 标签会被替换为 `child.vue` 中的内容。
+
+```html
+<!-- parent.vue -->
+<template>
+  <div>
+    <slot>
+      这是默认内容
+    </slot>
+  </div>
+</template>
+```
+
+```html
+<!-- child.vue -->
+<template>
+  <div>
+    <slot>
+      这是子组件的内容
+    </slot>
+  </div>
+</template>
+```
+
+在这个例子中，当 `child.vue` 被渲染到 `parent.vue` 中时，`parent.vue` 中的 `<slot>` 标签会被替换为 `child.vue` 中的 `<slot>` 标签的内容，即 `这是子组件的内容`。
+
+#### 5.2.1、插槽后备内容
+
+​		什么是后备内容，就是设置一个默认值，如果没有传递数据，那么这时候就可以显示插槽默认的数据。用户体验相对友好。
+
+#### 5.2.2、具名插槽
+
+​		当我们需要设置的内容比较复杂，就是比较定制化的时候，之前一个萝卜一个坑的情况已经不存在了，现在就是很多个萝卜很多个坑。所以就要使用到具名插槽，拿着身份证去找对应的坑。
+
+```html
+<template>
+  <div>
+    <MyDialog>
+      <template v-slot:head>
+        <div>
+          <h3>友情提示</h3>
+          <span class="close">✖️</span>
+        </div>
+      </template>
+      <template v-slot:content> </template>
+      <template v-slot:footer>
+        <button>确认</button>
+      </template>
+    </MyDialog>
+  </div>
+</template>
+```
+
+```html
+<template>
+  <div class="dialog">
+    <div class="dialog-header">
+        <slot name="head"></slot>
+    </div>
+
+    <div class="dialog-content">
+      <!-- 1. 在需要定制的位置，使用slot占位 -->
+      <slot name="content"> 我是默认值</slot>
+    </div>
+    <div class="dialog-footer">
+      <slot name="footer"></slot>
+    </div>
+  </div>
+</template>
+```
+
+#### 5.2.3、作用域插槽
+
+​		是这样的，定义插槽的时候是可以传值的，给插槽上可以绑定数据，将来组件可以使用，比如表格数据组件。
+
+```html
+<template>
+  <table class="my-table">
+    <thead>
+      <tr>
+        <th>序号</th>
+        <th>姓名</th>
+        <th>年纪</th>
+        <th>操作</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr v-for="(item, index) in data" :key="item.id">
+        <td>{{ index+1 }}</td>
+        <td>{{ item.name }}</td>
+        <td>{{ item.age }}</td>
+        <td>
+          <!-- 插槽 -->
+           <slot :row="item" msg="车市" name="btn"> </slot>
+           <!-- 相当于传递参数 
+           {
+              row:itme,
+              msg:'测试数据'
+           } -->
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</template>
+
+<script>
+export default {
+  props: {
+    data: {
+      type: Array,
+      required: true,
+    },
+  },
+};
+</script>
+```
+
+```html
+<template>
+  <div>
+    <MyTable :data="list">
+      <template #btn="obj">
+        <button @click="del(obj.row.id)">删除</button>
+      </template>
+    </MyTable>
+
+    <MyTable :data="list2">
+      <template #btn="{ row }">
+        <button @click="show(row)">查看</button>
+      </template>
+    </MyTable>
+  </div>
+</template>
+
+<script>
+import MyTable from "./components/MyTable.vue";
+export default {
+  data() {
+    return {
+      list: [
+        { id: 1, name: "张小花", age: 18 },
+        { id: 2, name: "孙大明", age: 19 },
+        { id: 3, name: "刘德忠", age: 17 },
+      ],
+      list2: [
+        { id: 1, name: "赵小云", age: 18 },
+        { id: 2, name: "刘蓓蓓", age: 19 },
+        { id: 3, name: "姜肖泰", age: 17 },
+      ],
+    };
+  },
+  components: {
+    MyTable,
+  },
+  methods: {
+    del(id) {
+      console.log("点击删除" + id);
+      this.list = this.list.filter((item) => item.id !== id);
+    },
+    show(row) {
+      console.log(row);
+    },
+  },
+};
+</script>
+
 ```
 
