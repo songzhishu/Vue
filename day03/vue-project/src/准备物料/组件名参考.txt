@@ -1,0 +1,24 @@
+/*
+ * @Author: 宋之树 2334304096@qq.com
+ * @Date: 2024-07-25 14:44:50
+ * @LastEditors: 宋之树 2334304096@qq.com
+ * @LastEditTime: 2024-07-25 14:59:31
+ * @FilePath: \vue-demo1\src\准备物料\组件名参考.txt
+ * @Description: 
+ */
+XtxShortCut
+XtxHeaderNav
+XtxBanner
+XtxNewGoods
+XtxHotBrand
+XtxTopic
+XtxFooter
+
+
+XtxShortCut  => 快捷链接
+XtxHeaderNav => 顶部导航
+XtxBanner    => 轮播区域
+XtxNewGoods  => 新鲜好物
+XtxHotBrand  => 热门品牌
+XtxTopic     => 最新专题
+XtxFooter    => 版权底部
