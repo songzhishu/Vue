@@ -1,4 +1,4 @@
-# Vuex
+# Vue
 
 ## 1、DAY1
 
@@ -1683,5 +1683,329 @@ export default {
 };
 </script>
 
+```
+
+## 6、DAY6
+
+### 6.1、单页应用
+
+​		单页应用（Single-page Application，SPA）是一种基于Web的现代应用程序，它将整个应用程序加载到一个HTML页面中，然后通过JavaScript动态地更新页面内容。这种应用程序通常具有以下特点：
+
+1. 响应式设计：单页应用通常采用响应式设计，可以在不同设备和浏览器中正常显示。
+2. 动态加载内容：单页应用通过JavaScript动态地加载和显示内容，这使得用户在浏览过程中不需要重新加载整个页面。
+3. 状态管理：单页应用通常使用客户端状态管理库（如React、Vue.js等）来管理应用程序的状态。这使得应用程序可以在不刷新页面的情况下更新状态。
+4. 路由：单页应用通常使用路由库（如React Router、Vue Router等）来管理页面导航。这使得用户可以在不刷新页面的情况下导航到不同的页面。
+5. 性能优化：单页应用通常采用性能优化技术，如代码分割、懒加载等，以提高应用程序的性能。
+
+### 6.2、路由
+
+​		vue中的路由，就是组件和路径之间的映射关系，传统意义上的路由是一种映射关系。Vue Router 是 Vue.js 官方的路由管理器。它用于构建单页面应用的应用程序内部路由。下面是一些关于 Vue Router 的基本信息：
+
+1. 安装：
+
+   使用 npm 或 yarn 安装 Vue Router：
+
+   ```
+   npm install vue-router
+   ```
+
+1. 基本使用：
+
+   在你的 Vue 项目中创建一个名为 `router.js` 的文件。在这个文件中，你需要导入 Vue 和 Vue Router，然后使用 Vue Router 的方法来配置路由。
+
+   ```js
+   import Vue from 'vue';
+   import Router from 'vue-router';
+   
+   Vue.use(Router);
+   
+   export default new Router({
+     mode: 'history',
+     routes: [
+       {
+         path: '/',
+         name: 'home',
+         component: () => import('@/components/Home.vue')
+       },
+       {
+         path: '/about',
+         name: 'about',
+         component: () => import('@/components/About.vue')
+       }
+     ]
+   });
+   ```
+
+   在 `main.js` 文件中，你需要导入 `router.js` 文件，并将其添加到 Vue 实例中。
+
+   ```js
+   import Vue from 'vue';
+   import App from './App.vue';
+   import router from './router';
+   
+   Vue.config.productionTip = false;
+   
+   new Vue({
+     router,
+     render: h => h(App),
+   }).$mount('#app');
+   ```
+
+2. 路由视图：
+
+   在 `App.vue` 或其他父组件中，你可以使用 `<router-view>` 组件来显示当前路由对应的组件。
+
+   ```html
+   <template>
+     <div id="app">
+       <router-view></router-view>
+     </div>
+   </template>
+   ```
+
+3. 导航：
+
+   在 Vue 组件中，你可以使用 `<router-link>` 组件来创建导航链接。
+
+   ```html
+   <nav>
+     <router-link to="/">Home</router-link>
+     <router-link to="/about">About</router-link>
+   </nav>
+   ```
+
+   你也可以在组件的 `<script>` 标签中使用 `this.$router` 对象来导航到其他路由。
+
+   ```
+   this.$router.push('/about');
+   ```
+
+这就是 Vue Router 的基本用法。
+
+#### 6.2.1、router-link
+
+​		在 Vue.js 中，`router-link` 是用于导航的组件。当用户点击某个链接时，`router-link` 会触发导航到新的页面。在 Vue Router 中，可以通过添加 `router-link-active` 类名来标记当前激活的链接。其实本质上是和a标签是没有什么区别的。
+
+```html
+<router-link to="/find">发现音乐</router-link>
+<router-link to="/my">我的音乐</router-link>
+<router-link to="/friend">朋友</router-link>
+```
+
+当转换为这个的时候，打开f12后观察页面元素：
+
+```
+router-link-exact-active
+router-link-active
+```
+
+​		那么问题来啦。这两个有什么区别吗，第一个是精准匹配，`to="my"`就只能匹配my，但是第二个就不是了，他可以匹配`/my`、`/my/a`、`/my/b`等等。桥豆麻袋那只能叫上面的类名吗，不能自定义吗？自定义的话这样！
+
+```js
+const router = new VueRouter({
+    routes: [
+        { path: '/my', component: My },
+        { path: '/friend', component: Friend },
+        { path: '/find', component: Find },
+    ],
+    /* 一个精准 一个模糊匹配 */
+    linkActiveClass:'自定义类名',
+    linkExactActiveClass:'自定类名'
+})
+```
+
+### 6.3、声明式导航跳转传参
+
+#### 6.3.1、查询参数传参
+
+传递值：
+
+```
+to="/path?参数名=值"
+```
+
+获取值：
+
+```
+$rout.query.参数名
+```
+
+#### 6.3.2、动态路由传参
+
+配置：
+
+```
+const router = new VueRouter({
+  routes: [
+    { path: '/home', component: Home },
+    { path: '/search/:words', component: Search }
+  ]
+})
+```
+
+配置导航链接
+
+```
+to="/path/参数值"
+```
+
+获取数据
+
+```
+$route.params.参数名
+```
+
+总结：
+
+​		对于查询参数来说比较适合需要传递多个参数的场景，对于动态路由传参来说，传递单个参数比较方便。
+
+注意：使用动态路由参数去传递参数时，如果参数正常传递的话其是没有什么问题的，但是如果传递的参数是空值的话，那么会导致匹配不到组件，如何解决这个问题呐------在参数名之后添加一个问号就可以!
+
+```
+#匹配规则
+path: '/search/:words?', component: Search
+```
+
+### 6.4、路由重定向
+
+​		重定向是一种网页跳转的方式，是指用户在浏览网页时，网页会自动跳转到另一个网页。重定向通常用于用户登录后跳转到首页、用户访问一个不存在或需要跳转的页面时自动跳转到正确的页面等场景。
+
+```
+const router = new VueRouter({
+  routes: [
+  	/* 匹配规则  重定向的路径 */
+  	{ path: '/', redirect: '/home' },
+    { path: '/home', component: Home },
+    { path: '/search/:words', component: Search }
+  ]
+})
+```
+
+**404页面**
+
+```
+// 创建了一个路由对象
+const router = new VueRouter({
+  routes: [
+    /* 匹配规则  重定向的路径 */
+    { path: '/', redirect: '/home' },
+    { path: '/home', component: Home },
+    { path: '/search/:words', component: Search },
+    {
+        path:'*',
+        component: NotFound
+    }
+  ]
+})
+```
+
+​		为什么要写在最后一个，没有发现页面，因为匹配路由从上往下，所以匹配到最后一个的时候，那么前面配置的路由规则一定不适用，大概率要访问的页面时不存在的。
+
+### 6.5、路由-模式设置
+
+在 Vue.js 中，路由模式主要有两种：`hash` 模式和 `history` 模式。
+
+- `hash` 模式：路由通过 URL 的 `#` 符号进行分割，例如 `http://www.example.com/#/home`。`hash` 模式不改变 URL 的 `http` 协议部分，只改变 `#` 后面的部分，因此刷新页面不会重新发起请求。
+- `history` 模式：路由通过 URL 的 `/` 进行分割，例如 `http://www.example.com/home`。`history` 模式会改变 URL 的整个协议部分，因此刷新页面会重新发起请求。
+
+​		在 Vue.js 2.x 中，默认使用 `hash` 模式。从 Vue.js 3.x 开始，默认使用 `history` 模式。如果需要更改路由模式，可以在创建 `VueRouter` 实例时，通过 `mode` 属性进行设置：
+
+```
+const router = new VueRouter({
+  	routes: [...],
+    mode: 'history'
+})
+```
+
+### 6.6、编程式导航
+
+#### 6.6.1、路由跳转
+
+通过路径：path
+
+```
+ goSearch(){
+      //简写 
+      //this.$router.push('/search')
+      this.$router.push({
+        path:'/search'
+      })
+ }
+```
+
+通过命名路由跳转：name
+
+```
+const router = new VueRouter({
+  routes: [
+    /* 匹配规则  重定向的路径 */
+    { name: '/', path: '/', redirect: '/home' },
+    { name: 'zhangsan', path: '/home', component: Home },
+    { name: 'xiaoli', path: '/search/:words?', component: Search },
+    {
+      path: '*',
+      component: NotFound
+    }
+  ],
+  mode: 'history'
+})
+
+
+this.$router.push({
+     name: 'xiaoli'
+})
+```
+
+#### 6.6.2、跳转传参
+
+- path路径
+
+**传参：**
+
+```
+#查询参数传参
+this.$router.push('/search?name=xiaoli&age=18')
+
+this.$router.push({
+        path:'/search',
+        query:{
+          name:"xiaoli",
+          age:20
+     }
+})
+
+#动态参数传参
+this.$router.push('/search/xiaoli')
+```
+
+**接收：**和之前的声明式传参接收一样
+
+```
+$route.query.参数名
+
+$route.params.参数名
+```
+
+- name路径
+
+**传参：**
+
+```
+#查询参数传参
+this.$router.push({
+        name:'路由规则名',
+        query:{
+          name:"xiaoli",
+          age:20
+     }
+})
+
+#动态参数传参
+this.$router.push({
+        name:'路由规则名',
+        params:{
+          name:"xiaoli",
+        }
+})
 ```
 

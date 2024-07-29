@@ -1,0 +1,91 @@
+<!--
+ * @Author: 宋之树 2334304096@qq.com
+ * @Date: 2024-07-29 19:42:06
+ * @LastEditors: 宋之树 2334304096@qq.com
+ * @LastEditTime: 2024-07-29 21:41:24
+ * @FilePath: \Vue\day06\vue-project\src\views\Home.vue
+ * @Description: 
+-->
+<template>
+  <div class="home">
+    <div class="logo-box"></div>
+    <div class="search-box">
+      <input type="text" />
+      <button @click="goSearch">搜索一下</button>
+    </div>
+    <div class="hot-link">
+      热门搜索：
+      <router-link to="/search/黑马程序员">黑马程序员</router-link>
+      <router-link to="/search/前端培训">前端培训</router-link>
+      <router-link to="/search/如何成为前端大牛">如何成为前端大牛</router-link>
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'HomePage',
+  methods: {
+    goSearch(){
+      /* 方式1 */
+      //简写 
+      //this.$router.push('/search?name=xiaoli&age=18')
+      
+      this.$router.push('/search/xiaoli1')
+      /* this.$router.push({
+        path:'/search',
+        query:{
+          name:"xiaoli",
+          age:20
+        }
+      }) */
+
+      /* 方式2 前提在路由配置规则中设置别名 */
+      /* this.$router.push({
+        name: 'xiaoli'
+      }) */
+    }
+  },
+}
+</script>
+
+<style>
+.logo-box {
+  height: 150px;
+  background: url("@/assets/logohm.jpeg") no-repeat center;
+}
+.search-box {
+  display: flex;
+  justify-content: center;
+}
+.search-box input {
+  width: 400px;
+  height: 30px;
+  line-height: 30px;
+  border: 2px solid #c4c7ce;
+  border-radius: 4px 0 0 4px;
+  outline: none;
+}
+.search-box input:focus {
+  border: 2px solid #ad2a26;
+}
+.search-box button {
+  width: 100px;
+  height: 36px;
+  border: none;
+  background-color: #ad2a26;
+  color: #fff;
+  position: relative;
+  left: -2px;
+  border-radius: 0 4px 4px 0;
+}
+.hot-link {
+  width: 508px;
+  height: 60px;
+  line-height: 60px;
+  margin: 0 auto;
+}
+.hot-link a {
+  margin: 0 5px;
+}
+</style>
