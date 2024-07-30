@@ -1,23 +1,29 @@
-<!--
- * @Author: 宋之树 2334304096@qq.com
- * @Date: 2024-07-30 08:56:35
- * @LastEditors: 宋之树 2334304096@qq.com
- * @LastEditTime: 2024-07-30 10:17:32
- * @FilePath: \Vue\day06\vue-project\src\App.vue
- * @Description: 
--->
 <template>
   <div class="h5-wrapper">
-    <keep-alive include="['LayoutPage']">
+    <div class="content">
+      <!-- 二级路由出口 -->
       <router-view></router-view>
-    </keep-alive>
+    </div>
+    <nav class="tabbar">
+      <router-link to="/article">面经</router-link>
+      <router-link to="/collect">收藏</router-link>
+      <router-link to="/like">喜欢</router-link>
+      <router-link to="/user">我的</router-link>
+    </nav>
   </div>
 </template>
 
 <script>
 export default {
-  name: "h5-wrapper",
-}
+  name: "LayoutPage",
+  activated(){
+    console.log("回到界面，激活");
+  },
+  deactivated () {
+    console.log("离开界面，失活");
+    
+  }
+};
 </script>
 
 <style>
@@ -48,9 +54,9 @@ body {
       font-size: 14px;
       color: #333;
       -webkit-tap-highlight-color: transparent;
-      &.router-link-active {
-        color: #fa0;
-      }
+    }
+    a.router-link-active {
+      color: orange;
     }
   }
 }
