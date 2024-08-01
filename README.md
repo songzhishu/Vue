@@ -2038,3 +2038,291 @@ this.$router.push({
   }
 ```
 
+## 7、DAY7
+
+### 7.1、Vuex
+
+​		Vuex 是一个专为 Vue.js 应用程序开发的状态管理模式和库。它采用集中式存储管理应用的所有组件的状态，并以相应的规则保证状态以一种可预测的方式发生变化。Vuex 能够实现数据的响应式和可预测性，从而使代码更加易于维护和理解。
+
+Vuex 主要解决以下问题：
+
+1. 状态共享：Vuex 允许我们在组件之间共享状态，这样我们就不需要使用 props 逐层传递数据，或者使用 `EventBus` 进行组件间通信。
+2. 状态可预测性：Vuex 通过 strict 模式确保状态的变化是可预测的，从而避免意外的副作用。
+3. 代码组织：Vuex 将相关的状态逻辑分离到单独的文件中，使得代码更加模块化和易于维护。
+4. 性能优化：Vuex 提供了诸如 `mapState`、`mapGetters`、`mapActions` 和 `mapMutations` 等辅助函数，可以帮助我们简化组件的代码，提高性能。
+
+**仓库**：
+
+```javascript
+export default new Vuex.Store({
+  state: {
+  	count：100,
+  	title："nihao"
+  },
+  getters: {
+  },
+  mutations: {
+  },
+  actions: {
+  },
+  modules: {
+  }
+})
+```
+
+获取数据的方式可以使用$store直接获取
+
+```
+this.$store.state.count
+```
+
+​		但是这种方式其实比较繁琐，如果多次使用，那么每次都要这样的去解析数据，想到可以用计算属性去接收参数，但是写计算属性函数也比较繁琐。有什么简化的方式
+
+#### 7.1.1、mapState
+
+​		`mapState`是Vuex中的一个辅助函数，用于生成计算属性。当一个组件需要获取多个状态的时候，将这些状态都声明为计算属性会有些重复和冗余。`mapState`函数可以帮助我们生成计算属性，让你少写几次代码。
+
+​		在使用`mapState`时，它可以接受一个数组或一个对象作为参数。当传入一个数组时，数组的元素应该是对应的state属性名，它会自动生成一个计算属性，该计算属性的值就是对应的state属性值。例如：
+
+```js
+computed: {
+  ...mapState(['count', 'name'])
+}
+```
+
+​		在这个例子中，`mapState`会生成两个计算属性`count`和`name`，它们的值分别是`this.$store.state.count`和`this.$store.state.name`13。
+
+​		当传入一个对象时，对象的每个属性都可以是一个字符串或一个函数。如果是字符串，那么它会生成一个计算属性，其名称是对象属性的名称，其值是对应的state属性值。如果是函数，那么它会生成一个计算属性，其名称是对象属性的名称，其值是函数的返回值。例如：
+
+```javascript
+computed: {
+  ...mapState({
+    count: 'count',
+    name: (state) => state.name,
+    repeatCount: 'count2'
+  })
+}
+```
+
+在这个例子中，`mapState`会生成三个计算属性`count`、`name`和`repeatCount`。`count`的值是`this.$store.state.count`，`name`的值是`state => state.name`的返回值，`repeatCount`的值是`this.$store.state.count2`。
+
+​		需要注意的是，当使用`mapState`时，它的属性名称和state属性的名称必须一致。如果不想直接使用state属性的名称，可以在对象中重新定义一个新的名称，然后在组件中使用新的名称。例如：
+
+```js
+computed: {
+  ...mapState({
+    myCount: 'count'
+  })
+}
+```
+
+#### 7.1.2、mutations
+
+​		是这样的，vuex依然是单数据链，要想实现响应式数据的需要mutations，Vuex的mutations是一种同步操作，用于改变Vuex store中的状态。每个mutation都有一个字符串的事件类型（type）和一个回调函数（handler），回调函数中包含state（store中的状态）作为第一个参数，以及payload（载荷，即传递给mutation的数据）作为第二个参数。在回调函数中，你可以改变state的值，从而更新状态。mutation是改变Vuex store中状态的唯一推荐方法，因为它们是串行化的，所以能确保状态更新的顺序，并且可以跟踪和记录每一个变化。2
+
+​		在Vuex中，mutation主要包含两部分：事件类型（type）和回调函数（handler）。事件类型是一个字符串，用于标识特定的mutation，而回调函数是一个函数，用于处理状态的改变。回调函数的第一个参数是state，即store中的状态，第二个参数是payload，即传递给mutation的数据。在回调函数中，你可以改变state的值，从而更新状态。
+
+**声明：**
+
+```
+// 里面含有修改仓库中数据的方法
+mutations: {
+    addCount (state) {
+      state.count++
+    }
+},
+```
+
+**调用:**
+
+```
+this.$store.commit('函数名')
+```
+
+当然修改参数不是上面那么简单，万一我有传递参数的需求呐！应该怎么做？
+
+**声明：**
+
+```
+// 里面含有修改仓库中数据的方法
+mutations: {
+    addCount (state,n) {
+      state.count=state.count+n
+    }
+},
+```
+
+**调用：**
+
+```
+this.$store.commit('函数名'，参数)
+```
+
+调用简化可以使用mapMutilations
+
+```
+improt {mapMutations} from 'vuex'
+
+methods:{
+	...mapMutations(['函数名'])
+}
+```
+
+#### 7.1.3、actions
+
+​		在Vuex中，actions是用来处理异步操作的。与mutation不同，actions不能直接修改state，而是通过提交mutation来修改。在组件中，你需要使用`this.$store.dispatch('actionName')`来触发action。在action中，你可以使用`context.commit('mutationName')`来提交mutation。同时，action也可以接收一个与mutation相同的payload参数，这个参数可以是一个对象，也可以是一个函数。如果是函数，它接收的参数是store实例。
+
+​		在处理异步流方面，action非常有用。例如，如果你需要从后端API获取数据，你可以在一个action中完成这个异步请求，然后提交mutation来更新state。
+
+​		此外，action也可以用来调用其他的action。你可以使用`context.dispatch('actionName')`来调用其他的action。
+
+```
+actions: {
+    // 异步函数
+    函数名(context,n){
+      setTimeout(() => {
+        函数体
+      }, 1000);
+    }
+  },
+```
+
+**调用**：
+
+```
+  this.$store.dispatch('函数名',参数)
+```
+
+**优化：**
+
+```
+import {mapActions} from 'vuex'
+
+methods:{
+	...mapActions(['函数名'])
+}
+```
+
+#### 7.1.4、getters
+
+​		在Vuex中，getters可以理解为store的计算属性。它们允许你对state中的数据进行过滤和处理，类似于组件中的计算属性。Getters可以接受state作为其第一个参数，也可以接受其他getter作为其第二个参数。Getters可以通过属性访问，也可以通过方法访问。通过属性访问时，getters的结果会被缓存，只有在其依赖值发生了改变才会被重新计算。通过方法访问时，每次都会进行调用，而不会缓存结果。你可以在任何组件中使用getters，将其混入到计算属性中。
+
+```
+getters: {
+    doubleCount (state) {
+      return state.count * 2
+    },
+    doubleCountPlusOne (state, getters) {
+      return getters.doubleCount + 1
+    }
+}
+```
+
+**调用：**
+
+```
+this.$store.getters.doubleCount
+```
+
+**辅助函数：**
+
+```
+import { mapGetters } from 'vuex'
+
+export default {
+  computed: {
+    ...mapGetters([
+      'doubleCount',
+      'doubleCountPlusOne'
+    ])
+  }
+}
+
+```
+
+#### 7.1.5、模块化
+
+​		是这样的，一个项目肯定不能把所有的数据都写在一个store中，这样做很不利于项目的维护，每一个模块都有一个独立的。对于模块中的数据访问可以使用以下方式。
+
+```
+模块名，需要开启命名空间
+export default{
+	namespaced：true
+	/*
+		子模块
+	*/
+}
+```
+
+##### 7.1.5.1、store:
+
+- 方式1
+
+```
+this.$store.state.模块名.数据
+```
+
+- 方式2 通过mapState映射
+
+```
+根基级别的映射 mapState['数据名']
+
+子模块基别的映射 mapState('模块名',['参数名'])
+```
+
+##### 7.1.5.2、getters
+
+- 方式1：直接访问
+
+```
+this.$store.getters['模块名/参数名']
+```
+
+- 方式2：maGetters
+
+```
+根级别的
+mapGetters['参数名']
+
+子模块
+mapGetters('模块名',['参数名'])
+```
+
+##### 7.1.5.3、mutation
+
+**注意**：默认模块总的mutation和action会被挂载到全局，需要开启命名空间，才会被挂载到子模块
+
+- 方式1：直接
+
+```
+this.$store.commit('模块名/参数',额外参数)
+```
+
+- 方式2：mapMutations
+
+```
+根级别
+mapMutations(['参数名'])
+
+子模块
+mapMutations('模块名', ['参数名'])
+```
+
+##### 7.1.5.4、action
+
+- 方式1：直接
+
+```
+this.$store.dispatch('模块名/参数',额外参数)
+```
+
+- 方式2：mapMutations
+
+```
+根级别
+mapActions(['参数名'])
+
+子模块
+mapActions('模块名', ['参数名'])
+```
+
