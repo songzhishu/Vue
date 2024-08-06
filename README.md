@@ -2326,3 +2326,272 @@ mapActions(['参数名'])
 mapActions('模块名', ['参数名'])
 ```
 
+## 8、DAY8
+
+Vue3是Vue框架的最新版本，相较于Vue2，它具有显著的特点和优势。以下是其特点：
+
+1. 性能提升：Vue3通过模板编译优化、组件实例缓存、事件侦听器缓存等方式，显著提高了应用程序的性能。
+2. Composition API：Vue3引入了Composition API，允许开发者通过函数的方式组织代码，提高了代码的灵活性和可重用性。
+3. 更好的TypeScript支持：Vue3对TypeScript的支持更加完善，提供了更好的类型推断和类型定义。
+4. 更小的包体积：Vue3通过tree-shaking技术和优化打包方式，减小了包体积，提高了加载速度1。
+
+​		在响应式原理、API类型以及生命周期钩子等方面，Vue3也进行了显著的提升和改进。例如，Vue3使用Proxy API进行数据代理，支持动态添加和删除属性，响应式处理更加完善。而在Composition API中，需要显式地导入生命周期钩子，并在setup函数中使用。
+
+### 8.1、组合式
+
+#### 8.1.1、setup选项
+
+```html
+<script>
+export default {
+  setup() {
+    const msg = '你好'
+    const logMsg = () => {
+      console.log(msg);
+    }
+    console.log('我是setup', this);
+
+    return {
+      msg,
+      logMsg
+    }
+  },
+  beforeCreate() {
+    console.log('我是beforeCreate')
+  },
+
+}
+</script>
+
+<template>
+  <!-- 直接使用是不行的,要return后才可以在模版中使用 -->
+  <div>{{ msg }}</div>
+  <button @click="logMsg">点击</button>
+</template>
+```
+
+**特点:**
+
+- setup的执行时机要被beforecreate还要早。
+- 在setup中，获取不到this--->unfined
+- 如果想在模版中使用setup中的函数或者是数据，需要在setup函数中return出去。
+
+随之而来的时，数据函数增多的时候，都要return出去，比较繁琐，如何省略掉return的代码编写！
+
+```html
+<script setup>
+    const msg = '你好'
+    const logMsg = () => {
+      console.log(msg);
+    }
+    console.log('我是setup', this);
+</script>
+
+<template>
+  <!-- 直接使用是不行的,要return后才可以在模版中使用 -->
+  <div>{{ msg }}</div>
+  <button @click="logMsg">点击</button>
+</template>
+```
+
+#### 8.1.2、reactive函数
+
+​		在Vue 3中，`reactive`函数是用于创建响应式状态的另一种方式。它与`ref`函数的不同之处在于，`reactive`函数只能用于对象类型（如对象、数组和如Map、Set这样的集合类型），不能用于原始类型（如string、number或boolean）2。
+
+​		当你使用`reactive`函数时，Vue会创建一个JavaScript代理（Proxy），这个代理会跟踪对响应式对象的访问和修改，以便进行依赖追踪和触发更新。与`ref`函数不同，`reactive`函数会深度地转换对象，当访问嵌套对象时，它们也会被`reactive`()包装，当`ref`的值是一个对象时，`ref`()也会在内部调用它。因此，与浅层`ref`或浅层`reactive`不同，`reactive`()会提供深层响应性。
+
+```html
+<script setup>
+//导入
+import { reactive } from 'vue'
+
+//执行函数 变量
+const state = reactive({
+  count: 100
+})
+</script>
+
+<template>
+  <!-- 直接使用是不行的,要return后才可以在模版中使用 -->
+  <div>{{ state.count }}</div>
+  <button @click="state.count++">点击</button>
+</template>
+```
+
+#### 8.1.3、ref函数
+
+​		`ref`函数是Vue 3中用于创建响应式状态的函数。与`reactive`函数不同，`ref`函数不仅可以用于对象类型，还可以用于原始类型（如string、number或boolean）。
+
+​		当你使用`ref`函数时，Vue会创建一个包装对象，这个包装对象会暴露一个`.value`属性来访问和修改其内部的原始值。在模板中，`ref`变量会自动解包，可以直接在模板中使用其内部的原始值。
+
+```html
+<script setup>
+//导入
+import { ref } from 'vue'
+
+//执行函数 变量
+const state = ref(100)
+
+//包装类对象
+console.log(state);
+//具体数据
+console.log(state.value);
+</script>
+
+<template>
+  <!-- 直接使用是不行的,要return后才可以在模版中使用 -->
+  <div>{{ state }}</div>
+  <button @click="state++">点击</button>
+</template>
+```
+
+#### 8.1.4、computed
+
+在Vue.js 3中，`computed`函数是一个核心的概念，它允许我们声明式地定义依赖于响应式数据的计算属性。`computed`函数返回的是一个`refImpl`，即一个响应式的引用实现。所谓`refImpl`，实际上是一个包含`value`属性的对象，这个对象的`value`属性会随着计算属性依赖的数据变化而变化。这意味着，当你修改了计算属性依赖的响应式数据时，Vue会自动更新计算属性的值，并且确保这个变化能够反映到DOM上。
+
+```js
+const count = ref(1)
+const plusOne = computed({
+  get: () => count.value + 1,
+  set: (val) => {
+    count.value = val - 1
+  }
+})
+
+plusOne.value = 1
+console.log(count.value) // 0
+```
+
+#### 8.1.5、watch
+
+**简单使用：**
+
+```
+//单个
+watch(
+  count,
+  (n, o) => {
+    console.log("新" + n + '旧' + o);
+  }
+)
+
+//多个
+watch(
+  [count,nickname],
+  (n, o) => {
+    console.log("多新" + n + '多旧' + o);
+  }
+)
+```
+
+高级:
+
+开启立即执行
+
+```
+watch(
+  count,
+  (n, o) => {
+    console.log("新" + n + '旧' + o);
+  },
+  {
+    immediate: true
+  }
+)
+```
+
+深度监视
+
+​		默认watch进行的是浅层的监视，对于简单类型的数据是体现不出来的，但是对于复杂的数据类型的话，即使数据修改了也无法出触动到watch函数。只有修改了对象的地址，监视函数才能触发
+
+```
+const user = ref({
+  name: '李四',
+  age: 18,
+  sex: '男'
+})
+
+const changeUser = () => {
+  user.value.age++
+}
+
+watch(
+  user,
+  (n, o) => {
+    alert(111)
+    console.log("多新" + n + '多旧' + o);
+  },
+  {
+    deep: true
+  }
+)
+```
+
+### 8.2、父子通信
+
+**父传子：**
+
+```
+<template>
+  <div class="app">
+    <Son car="小米"></Son>
+  </div>
+</template>
+```
+
+```
+<script setup>
+
+const props = defineProps({
+  car: String
+})
+console.log(props.car);
+
+</script>
+
+<template>
+  <div>我是子组件{{ car }}</div>
+</template>
+```
+
+**子传父：**
+
+```
+<script setup>
+import Son from '@/components/Son.vue'
+
+const getMsg = (msg) => {
+  console.log(msg);
+
+}
+</script>
+
+<template>
+  <div class="app">
+    <Son car="小米" @getMsg="getMsg"></Son>
+  </div>
+</template>
+```
+
+```
+<script setup>
+
+const props = defineProps({
+  car: String
+})
+console.log(props.car);
+
+
+const emit = defineEmits(['getMsg'])
+const sentMsg = () => {
+  emit('getMsg', 'haoefo')
+}
+</script>
+
+<template>
+  <div>我是子组件{{ car }}
+    <button @click="sentMsg">发送消息</button>
+  </div>
+</template>
+```
+
